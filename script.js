@@ -1,3 +1,4 @@
+
 const carCanvas=document.getElementById("carCanvas");
 carCanvas.width=200;
 const networkCanvas=document.getElementById("networkCanvas");
@@ -16,22 +17,18 @@ if(localStorage.getItem("bestBrain")){
         cars[i].brain=JSON.parse(
             localStorage.getItem("bestBrain"));
         if(i!=0){
-            NeuralNetwork.mutate(cars[i].brain,0.2);
+            NeuralNetwork.mutate(cars[i].brain,0.1);
         }
     }
 }
 
-const traffic=[
-    new Car(road.getLaneCenter(1),-100,30,50,"DUMMY",2),
-    new Car(road.getLaneCenter(0),-300,30,50,"DUMMY",2),
-    new Car(road.getLaneCenter(2),-300,30,50,"DUMMY",2),
-    new Car(road.getLaneCenter(0),-500,30,50,"DUMMY",2),
-    new Car(road.getLaneCenter(1),-500,30,50,"DUMMY",2),
-    new Car(road.getLaneCenter(1),-700,30,50,"DUMMY",2),
-    new Car(road.getLaneCenter(2),-700,30,50,"DUMMY",2),
-];
-
-animate();
+let traffic = [];
+const laneCount = 3;
+const carWidth = 30;
+const carHeight = 50;
+let lastSpawnY = -100;
+const spawnGap = 200; // gap between spawns
+const maxTraffic = 20;
 
 function save(){
     localStorage.setItem("bestBrain",
@@ -51,16 +48,29 @@ function generateCars(N){
 }
 
 function animate(time){
+    // 👇 Dynamic Traffic Spawning
+    if (lastSpawnY - bestCar.y < 1000) {
+        const lane = Math.floor(Math.random() * laneCount);
+        const y = lastSpawnY - spawnGap;
+        traffic.push(
+            new Car(road.getLaneCenter(lane), y, carWidth, carHeight, "DUMMY", 2, getRandomColor())
+        );
+        lastSpawnY = y;
+    }
+
+    // 👇 Remove far-behind cars
+    traffic = traffic.filter(car => car.y < bestCar.y + 500);
+
     for(let i=0;i<traffic.length;i++){
         traffic[i].update(road.borders,[]);
     }
     for(let i=0;i<cars.length;i++){
         cars[i].update(road.borders,traffic);
     }
+
     bestCar=cars.find(
-        c=>c.y==Math.min(
-            ...cars.map(c=>c.y)
-        ));
+        c=>c.y==Math.min(...cars.map(c=>c.y))
+    );
 
     carCanvas.height=window.innerHeight;
     networkCanvas.height=window.innerHeight;
@@ -70,14 +80,15 @@ function animate(time){
 
     road.draw(carCtx);
     for(let i=0;i<traffic.length;i++){
-        traffic[i].draw(carCtx,"red");
+        traffic[i].draw(carCtx);
     }
+
     carCtx.globalAlpha=0.2;
     for(let i=0;i<cars.length;i++){
-        cars[i].draw(carCtx,"blue");
+        cars[i].draw(carCtx);
     }
     carCtx.globalAlpha=1;
-    bestCar.draw(carCtx,"blue",true);
+    bestCar.draw(carCtx,true);
 
     carCtx.restore();
 
@@ -85,3 +96,5 @@ function animate(time){
     Visualizer.drawNetwork(networkCtx,bestCar.brain);
     requestAnimationFrame(animate);
 }
+
+animate();
