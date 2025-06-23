@@ -11,7 +11,6 @@ class Road{
         this.top=-infinity;
         this.bottom=infinity;
 
-        //for borders
         const topLeft={x:this.left,y:this.top};
         const topRight={x:this.right,y:this.top};
         const bottomLeft={x:this.left,y:this.bottom};
@@ -22,7 +21,6 @@ class Road{
         ];
     }
 
-    //to center a car
     getLaneCenter(laneIndex){
         const laneWidth=this.width/this.laneCount;
         return this.left+laneWidth/2+
