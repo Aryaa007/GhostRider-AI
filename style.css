@@ -1,10 +1,15 @@
-body{
-    margin:0;
-    background:darkgray;
-    overflow:hidden;
-    display:flex;
-    justify-content:center;
-    align-items:center;
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-image: url('Background.png'); /* Replace with your actual PNG file path */
+    background-size: cover;         /* Makes sure the image covers the whole screen */
+    background-position: center;    /* Keeps the image centered */
+    background-repeat: no-repeat;   /* Stops it from repeating */
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #verticalButtons{
@@ -20,12 +25,12 @@ button{
     cursor:pointer;
 }
 button:hover{
-    background:blue;
+    background:rgb(255, 200, 0);
 }
 
 #networkCanvas{
     background:black;
 }
 #carCanvas{
-    background:lightgray;
+    background:rgb(45, 39, 39);
 }
